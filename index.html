@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Giphy HW</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
+</head>
+<body>
+
+  <style type="text/css">
+    button{
+      background-color: #fca530;
+      padding: 5px;
+      margin: 20px;
+    }
+    #tvInput{
+      height: 50px;
+      width: 25%;
+    }
+    #addShow{
+      margin-left: 28%;
+      margin-top: 1%;
+    }
+  </style>
+
+  <div class='container'>
+    <!-- buttons will be here -->
+    <div id='tvShow'></div> 
+      <button data-tvshow='house of cards'>House of Cards</button>
+  </div>
+
+  <div class='container'>
+    <div class='jumbotron'>  
+      <form id='tvForm'>
+        <label for='tvInput'>Add TV Show</label>
+        <input type="text" id='tvInput'><br>
+
+        <!-- triggers new tv show to be added -->
+        <input type='submit' id='addShow' value='Submit'>
+      </form>
+    </div>
+  </div>
+
+  <div class='container'>
+   <!--  tv shows being populated here -->
+    <div id='tvView'></div>
+  </div>
+
+
+  
+
+  <script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
+  <script type='text/javascript'>
+  var shows = [];
+  $('#addShow').on('click', function(){
+    var tube = $('#tvInput').val().trim();
+    $('#tvInput').append('<button data-tvshow="'+tvshow+'">'+tvshow+'</button>');
+    return false;
+  });
+    $(document).on('click', 'button', function(){
+      var tvshow = $(this).data('tvshow');
+      var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + tvshow + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      $.ajax({
+        url: queryURL,
+        method: 'GET'
+      }) 
+      .done(function(response){
+        console.log(response);
+
+        var results = response.data
+        for(var i = 0; i < results.length; i++){
+          var tvDiv = $('<div class="item">');
+          var p = $('<p>');
+          p.text(results[i].rating);
+
+          var tvImage = $('<img>'); 
+          tvImage.attr('src',results[i].images.fixed_height.url); 
+
+          tvDiv.append(p); 
+          tvDiv.append(tvImage); 
+          $('#tvView').prepend(tvDiv);
+        }
+      });
+    });
+
+    function renderButtons(){ 
+    // Deletes the movies prior to adding new movies (this is necessary otherwise you will have repeat buttons)
+    $('#tvShow').empty();
+    // Loops through the array of movies
+    for (var i = 0; i < results.length; i++){
+      // Then dynamicaly generates buttons for each movie in the array
+      // Note the jQUery syntax here... 
+        var t = $('<button>') // This code $('<button>') is all jQuery needs to create the beginning and end tag. (<button></button>)
+        t.addClass('favShow'); // Added a class 
+        t.attr('data-tvshow', results[i]); // Added a data-attribute
+        t.text(results[i]); // Provided the initial button text
+        $('#tvShow').append(t); // Added the button to the HTML
+    }
+  }
+  </script>
+</body>
+</html>
